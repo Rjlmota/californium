@@ -22,6 +22,7 @@
  ******************************************************************************/
 package org.eclipse.californium.core.coap;
 
+//ISSO É UM TESTE
 import static org.eclipse.californium.core.coap.CoAP.MessageFormat.*;
 
 import java.nio.charset.Charset;
