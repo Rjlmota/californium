@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***************************
  * Copyright (c) 2015 Institute for Pervasive Computing, ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
@@ -20,8 +20,11 @@
  *                                                    reregister. issue #56.
  *                                                    cleanup thread visibility and
  *                                                    response ordering. 
- ******************************************************************************/
+ **************************/
 package org.eclipse.californium.core;
+
+
+import org.eclipse.californium.core.observe.Event;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,6 +34,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.sql.Timestamp;
+//import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MessageObserver;
@@ -80,6 +87,15 @@ public class CoapObserveRelation {
 	/** The orderer. */
 	private volatile ObserveNotificationOrderer orderer;
 
+	
+	
+	/*Renato
+	 * 
+	 */
+	
+	public List<String> teste = new ArrayList<String>();
+	public Timestamp last_Time;
+	
 	/**
 	 * Constructs a new CoapObserveRelation with the specified request.
 	 *
@@ -242,6 +258,13 @@ public class CoapObserveRelation {
 	 *         {@code false} otherwise.
 	 */
 	protected boolean onResponse(CoapResponse response) {
+		last_Time = new Timestamp(System.currentTimeMillis());
+		System.out.println(last_Time);
+		
+		Event.add_data(last_Time, response.advanced().getSource());
+		
+		System.out.println("onResponse: " + response.advanced().getSource());
+		teste.add(response.advanced().getPayloadString());
 		if (null != response && orderer.isNew(response.advanced())) {
 			current = response;
 			prepareReregistration(response, 2000);
@@ -253,6 +276,7 @@ public class CoapObserveRelation {
 	}
 
 	private void setReregistrationHandle(ScheduledFuture<?> reregistrationHandle) {
+		System.out.println("setReregistration");
 		ScheduledFuture<?> previousHandle = this.reregistrationHandle.getAndSet(reregistrationHandle);
 		if (previousHandle != null) {
 			previousHandle.cancel(false);
@@ -260,11 +284,13 @@ public class CoapObserveRelation {
 	}
 
 	private void prepareReregistration(CoapResponse response, long backoff) {
+		System.out.println("prepareReregistration");
+		System.out.println("address: " + response.advanced().getSource());
 		if (!isCanceled()) {
 			long timeout = response.getOptions().getMaxAge() * 1000 + backoff;
 			ScheduledFuture<?> f = scheduler.schedule(new Runnable() {
 	
-				@Override
+				 @Override
 				public void run() {
 					reregister();
 				}

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***************************
  * Copyright (c) 2015 Institute for Pervasive Computing, ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
@@ -13,49 +13,106 @@
  * Contributors:
  *    Matthias Kovatsch - creator and main architect
  *    Achim Kraus (Bosch Software Innovations GmbH) - add saving payload
- ******************************************************************************/
+ **************************/
 package org.eclipse.californium.examples;
+
+import org.eclipse.californium.core.observe.Event;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapObserveRelation;
 
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.Utils;
 
 
+import org.eclipse.californium.core.observe.Event;
+
+
+
+
+
+
+
+
 public class GETClient {
 
 	/*
 	 * Application entry point.
-	 * 
-	 */	
+	 *
+	 */
+	
 	public static void main(String args[]) {
 		
-		URI uri = null; // URI parameter of the request
+		
+		int obs_number = 5;
+		//URI uri = null; // URI parameter of the request
+		//URI uri2 = null;
+		URI[] uri_arr = new URI[obs_number];
+		CoapClient[] client_arr = new CoapClient[obs_number];
+		CoapObserveRelation[] relation_arr = new CoapObserveRelation[obs_number];
 		
 		if (args.length > 0) {
+			for(int i = 0; i < obs_number; i++) {
+				// input URI from command line arguments
+				try {
+					//uri = new URI(args[0]);
+					int z = i+2;
+					uri_arr[i] = new URI(args[0].substring(0, 22) + z + args[0].substring(23));
+				} catch (URISyntaxException e) {
+					System.err.println("Invalid URI: " + e.getMessage());
+					System.exit(-1);
+				}
+				
+				System.out.println("URI: " + uri_arr[i]);
+				//CoapClient client = new CoapClient(uri);
+				client_arr[i] = new CoapClient(uri_arr[i]);
+				
+				System.out.println("===============\nCO01+06");
+				System.out.println("---------------\nGET /obs with Observe");
+				//CoapObserveRelation relation1 = client_arr[i].observe(
+				relation_arr[i] = client_arr[i].observe(
+				new CoapHandler() {
+				@Override public void onLoad(CoapResponse response) {
+				String content = response.getResponseText();
+				System.out.println("-CO0----------");
+				System.out.println(content);
+				}
+	
+				@Override public void onError() {
+				System.err.println("-Failed--------");
+				}
+				});
+		
 			
-			// input URI from command line arguments
-			try {
-				uri = new URI(args[0]);
-			} catch (URISyntaxException e) {
-				System.err.println("Invalid URI: " + e.getMessage());
-				System.exit(-1);
 			}
+			try { Thread.sleep(6*10000); } catch (InterruptedException e) { }
+			System.out.println("----------"
+					+ "-----\nCancel Observe");
+			//relation1.reactiveCancel();
 			
-			CoapClient client = new CoapClient(uri);
+			//try { Thread.sleep(6*10000); } catch (InterruptedException e) { }
+			
+			//System.out.println("teste: " + relation_arr[0].teste);
+			
+			//System.out.println("aqui: " + relation_arr[0].last_Time);
+			
+			//Stats.event_observers(relation_arr);
+			
+			System.out.println("---------------\nCancel Observe 2");
 
-			CoapResponse response = client.get();
+			CoapResponse response = client_arr[0].get();
 			
 			if (response!=null) {
 				
 				System.out.println(response.getCode());
 				System.out.println(response.getOptions());
 				if (args.length > 1) {
-					try (FileOutputStream out = new FileOutputStream(args[1])) {
+					try (FileOutputStream out = new FileOutputStream(args[2])) {
 						out.write(response.getPayload());
 					} catch (IOException e) {
 						e.printStackTrace();
