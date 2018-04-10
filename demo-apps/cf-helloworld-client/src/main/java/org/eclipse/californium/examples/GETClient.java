@@ -16,7 +16,7 @@
  **************************/
 package org.eclipse.californium.examples;
 
-import org.eclipse.californium.core.observe.Event;
+//import org.eclipse.californium.core.observe.Event;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.Utils;
 
 
-import org.eclipse.californium.core.observe.Event;
+//import org.eclipse.californium.core.observe.Event;
 
 
 
@@ -90,7 +90,7 @@ public class GETClient {
 		
 			
 			}
-			try { Thread.sleep(6*10000); } catch (InterruptedException e) { }
+			try { Thread.sleep(6*30000); } catch (InterruptedException e) { }
 			System.out.println("----------"
 					+ "-----\nCancel Observe");
 			//relation1.reactiveCancel();

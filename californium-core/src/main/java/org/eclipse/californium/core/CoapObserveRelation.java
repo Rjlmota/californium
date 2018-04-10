@@ -261,10 +261,16 @@ public class CoapObserveRelation {
 		last_Time = new Timestamp(System.currentTimeMillis());
 		System.out.println(last_Time);
 		
-		Event.add_data(last_Time, response.advanced().getSource());
+		if(response.advanced().isNotification())
+			Event.add_data(last_Time, response.advanced().getSource());
 		
-		System.out.println("onResponse: " + response.advanced().getSource());
-		teste.add(response.advanced().getPayloadString());
+		System.out.println("Source: " + response.advanced().getSource());
+		System.out.println("Payload: " + response.advanced().getPayloadString());
+		System.out.println("msg id: " + response.advanced().getMID());
+		System.out.println("code: " + response.advanced().getType());
+		
+		
+		//teste.add(response.advanced().getPayloadString());
 		if (null != response && orderer.isNew(response.advanced())) {
 			current = response;
 			prepareReregistration(response, 2000);
@@ -276,7 +282,6 @@ public class CoapObserveRelation {
 	}
 
 	private void setReregistrationHandle(ScheduledFuture<?> reregistrationHandle) {
-		System.out.println("setReregistration");
 		ScheduledFuture<?> previousHandle = this.reregistrationHandle.getAndSet(reregistrationHandle);
 		if (previousHandle != null) {
 			previousHandle.cancel(false);
@@ -284,8 +289,6 @@ public class CoapObserveRelation {
 	}
 
 	private void prepareReregistration(CoapResponse response, long backoff) {
-		System.out.println("prepareReregistration");
-		System.out.println("address: " + response.advanced().getSource());
 		if (!isCanceled()) {
 			long timeout = response.getOptions().getMaxAge() * 1000 + backoff;
 			ScheduledFuture<?> f = scheduler.schedule(new Runnable() {

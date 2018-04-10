@@ -21,6 +21,8 @@ package org.eclipse.californium.core.coap;
 
 import java.util.Arrays;
 
+import org.eclipse.californium.core.observe.Event;
+
 import org.eclipse.californium.core.coap.CoAP.Type;
 
 /**
@@ -75,10 +77,13 @@ public class EmptyMessage extends Message {
 	 * @return the acknowledgment
 	 */
 	public static EmptyMessage newACK(Message message) {
+		System.out.println("Sending ACK");
 		EmptyMessage ack = new EmptyMessage(Type.ACK);
 		ack.setDestination(message.getSource());
 		ack.setDestinationPort(message.getSourcePort());
 		ack.setMID(message.getMID());
+		//ack.setPayload(Event.next_con(Message))
+		ack.setPayload(Event.next_con(message));
 		return ack;
 	}
 	

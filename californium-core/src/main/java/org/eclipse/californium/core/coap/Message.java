@@ -512,6 +512,7 @@ public abstract class Message {
 		return acknowledged;
 	}
 
+	
 	/**
 	 * Marks this message as acknowledged.
 	 * Not part of the fluent API.
@@ -519,7 +520,9 @@ public abstract class Message {
 	 * @param acknowledged if acknowledged
 	 */
 	public void setAcknowledged(boolean acknowledged) {
+		System.out.println("setAck");
 		this.acknowledged = acknowledged;
+		
 		if (acknowledged)
 			for (MessageObserver handler:getMessageObservers())
 				handler.onAcknowledgement();

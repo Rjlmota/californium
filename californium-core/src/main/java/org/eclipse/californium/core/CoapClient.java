@@ -240,6 +240,7 @@ public class CoapClient {
 	 * @return the CoAP client
 	 */
 	public CoapClient useCONs() {
+		System.out.println("useCON/CoapClient.java");
 		this.type = Type.CON;
 		return this;
 	}
