@@ -90,7 +90,7 @@ public class GETClient {
 		
 			
 			}
-			try { Thread.sleep(6*30000); } catch (InterruptedException e) { }
+			try { Thread.sleep(6*100000); } catch (InterruptedException e) { }
 			System.out.println("----------"
 					+ "-----\nCancel Observe");
 			//relation1.reactiveCancel();
