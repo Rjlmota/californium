@@ -16,6 +16,8 @@
  **************************/
 package org.eclipse.californium.examples;
 
+import org.eclipse.californium.core.observe.Event;
+
 //import org.eclipse.californium.core.observe.Event;
 
 import java.io.FileOutputStream;
@@ -90,7 +92,7 @@ public class GETClient {
 		
 			
 			}
-			try { Thread.sleep(6*100000); } catch (InterruptedException e) { }
+			try { Thread.sleep(6*10000); } catch (InterruptedException e) { }
 			System.out.println("----------"
 					+ "-----\nCancel Observe");
 			//relation1.reactiveCancel();
@@ -104,6 +106,10 @@ public class GETClient {
 			//Stats.event_observers(relation_arr);
 			
 			System.out.println("---------------\nCancel Observe 2");
+			
+			for (int i = 0; i < obs_number; i++) {
+				System.out.println("Mensagens recebidas por " +  Event.IP.get(i) + " : " + Event.rec_msgs.get(i));
+			}
 
 			CoapResponse response = client_arr[0].get();
 			
