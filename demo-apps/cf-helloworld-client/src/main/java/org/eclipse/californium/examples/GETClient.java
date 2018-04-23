@@ -108,7 +108,7 @@ public class GETClient {
 			System.out.println("---------------\nCancel Observe 2");
 			
 			for (int i = 0; i < obs_number; i++) {
-				System.out.println("Mensagens recebidas por " +  Event.IP.get(i) + " : " + Event.rec_msgs.get(i));
+				System.out.println("Mensagens recebidas por " +  Event.Servers.get(i).IP + " : " + Event.Servers.get(i).rec_msgs);
 			}
 
 			CoapResponse response = client_arr[0].get();
