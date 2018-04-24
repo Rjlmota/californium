@@ -27,6 +27,15 @@ public class Event {
 	
 	
 	
+	
+	public static void print_stats() {
+		for(int i = 0; i < Servers.size(); i++) {
+			System.out.println("Mensagens recebidas por " +  Event.Servers.get(i).IP + " : " + Event.Servers.get(i).rec_msgs);
+		}
+	}
+	
+	
+	
 	public static void add_data(Timestamp last_Time, InetAddress inetAddress) {
 		for(int i = 0; i < Servers.size(); i++) {
 			if(inetAddress.equals(Servers.get(i).IP)){
@@ -56,7 +65,7 @@ public class Event {
 		
 	private static void event_data() {
 		observers = 0;
-		
+		obs_arr.clear();
 		if(Servers.size() < 2){
 			System.out.println(observers + " mote is observing the event \n");
 			return;
@@ -67,6 +76,8 @@ public class Event {
 					obs_arr.add(Servers.get(i).IP);
 				}
 		System.out.println(observers + " mote(s) observing the event \n");
+		
+		print_stats();
 	}
 	
 	

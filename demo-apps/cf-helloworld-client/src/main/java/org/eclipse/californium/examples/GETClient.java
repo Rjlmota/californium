@@ -51,7 +51,7 @@ public class GETClient {
 	public static void main(String args[]) {
 		
 		
-		int obs_number = 5;
+		int obs_number = Integer.parseInt(args[1]);
 		//URI uri = null; // URI parameter of the request
 		//URI uri2 = null;
 		URI[] uri_arr = new URI[obs_number];
@@ -92,7 +92,7 @@ public class GETClient {
 		
 			
 			}
-			try { Thread.sleep(6*10000); } catch (InterruptedException e) { }
+			try { Thread.sleep(100000); } catch (InterruptedException e) { }
 			System.out.println("----------"
 					+ "-----\nCancel Observe");
 			//relation1.reactiveCancel();
@@ -107,10 +107,11 @@ public class GETClient {
 			
 			System.out.println("---------------\nCancel Observe 2");
 			
+			/*
 			for (int i = 0; i < obs_number; i++) {
 				System.out.println("Mensagens recebidas por " +  Event.Servers.get(i).IP + " : " + Event.Servers.get(i).rec_msgs);
 			}
-
+			 */
 			CoapResponse response = client_arr[0].get();
 			
 			if (response!=null) {
