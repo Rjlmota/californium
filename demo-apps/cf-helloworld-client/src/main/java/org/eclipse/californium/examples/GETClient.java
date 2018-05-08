@@ -41,8 +41,9 @@ import org.eclipse.californium.core.Utils;
 
 
 
-public class GETClient {
 
+public class GETClient {
+	
 	/*
 	 * Application entry point.
 	 *
@@ -51,7 +52,7 @@ public class GETClient {
 	public static void main(String args[]) {
 		
 		
-		int obs_number = Integer.parseInt(args[1]);
+		int obs_number = Integer.parseInt(args[0]);
 		//URI uri = null; // URI parameter of the request
 		//URI uri2 = null;
 		URI[] uri_arr = new URI[obs_number];
@@ -62,9 +63,8 @@ public class GETClient {
 			for(int i = 0; i < obs_number; i++) {
 				// input URI from command line arguments
 				try {
-					//uri = new URI(args[0]);
-					int z = i+2;
-					uri_arr[i] = new URI(args[0].substring(0, 22) + z + args[0].substring(23));
+					//int z = i+2;
+					uri_arr[i] = new URI("coap://[aaaa::200:0:0:" + Integer.toHexString(i+2) + "]:5683/test/push");
 				} catch (URISyntaxException e) {
 					System.err.println("Invalid URI: " + e.getMessage());
 					System.exit(-1);
@@ -92,7 +92,7 @@ public class GETClient {
 		
 			
 			}
-			try { Thread.sleep(100000); } catch (InterruptedException e) { }
+			try { Thread.sleep(Integer.parseInt(args[1])); } catch (InterruptedException e) { }
 			System.out.println("----------"
 					+ "-----\nCancel Observe");
 			//relation1.reactiveCancel();
