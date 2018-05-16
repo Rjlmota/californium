@@ -262,12 +262,12 @@ public class CoapObserveRelation {
 		System.out.println(last_Time);
 		
 		if((response.advanced().isNotification() && (response.advanced().getPayloadSize() < 8)))
-			Event.add_data(last_Time, response.advanced().getSource());
+			Event.add_data(last_Time, response.advanced().getSource(), response.advanced().getMID());
 		
-		System.out.println("Source: " + response.advanced().getSource());
+		System.out.println("Source: " + response.advanced().getSource() + " " + response.advanced().getMID() + " " + response.advanced().getType());
 		System.out.println("Payload: " + response.advanced().getPayloadString());
-		System.out.println("msg id: " + response.advanced().getMID());
-		System.out.println("code: " + response.advanced().getType());
+		//System.out.println("msg id: " + response.advanced().getMID());
+		//System.out.println("code: " + response.advanced().getType());
 		System.out.println("isAck: " + response.advanced().getPayloadSize());
 		
 		

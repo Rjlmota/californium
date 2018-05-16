@@ -16,7 +16,7 @@
  **************************/
 package org.eclipse.californium.examples;
 
-import org.eclipse.californium.core.observe.Event;
+//import org.eclipse.californium.core.observe.Event;
 
 //import org.eclipse.californium.core.observe.Event;
 

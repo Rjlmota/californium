@@ -31,16 +31,21 @@ public class Event {
 	public static void print_stats() {
 		for(int i = 0; i < Servers.size(); i++) {
 			System.out.println("Mensagens recebidas por " +  Event.Servers.get(i).IP + " : " + Event.Servers.get(i).rec_msgs);
+			System.out.println("Duplicadas por : " + Event.Servers.get(i).IP + " : " + Event.Servers.get(i).duplicates);
 		}
 	}
 	
 	
 	
-	public static void add_data(Timestamp last_Time, InetAddress inetAddress) {
+	public static void add_data(Timestamp last_Time, InetAddress inetAddress, int MID) {
 		for(int i = 0; i < Servers.size(); i++) {
 			if(inetAddress.equals(Servers.get(i).IP)){
 				Servers.get(i).last_datetime = last_Time;
-				Servers.get(i).rec_msgs++;
+				if(MID > Servers.get(i).last_mid)
+					Servers.get(i).rec_msgs++;
+				else Servers.get(i).duplicates++;
+				
+				Servers.get(i).last_mid = MID;
 				event_data();
 				return;
 			}	
@@ -71,7 +76,7 @@ public class Event {
 			return;
 		}
 		for(int i = 0; i < Servers.size(); i++)
-				if(Math.abs(Servers.get(most_recent_event()).last_datetime.getTime() - Servers.get(i).last_datetime.getTime()) < 10000) {
+				if(Math.abs(Servers.get(most_recent_event()).last_datetime.getTime() - Servers.get(i).last_datetime.getTime()) < 100000) {
 					observers++;
 					obs_arr.add(Servers.get(i).IP);
 				}
