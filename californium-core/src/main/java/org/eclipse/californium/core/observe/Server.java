@@ -13,5 +13,6 @@ public class Server{
 	 public int last_con;
 	 public int rec_msgs = 0;
 	 public int duplicates = 0;
+	 public int lost_msgs = 0;
 	
 }
