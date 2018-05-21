@@ -26,9 +26,32 @@ public class Event {
 	public static List <Server> Servers = new ArrayList <Server>();
 	
 	
+	private static boolean appendMID(int MID, Server server) {
+		
+		//If input MID is already in array, it counts as duplicate.
+		for(int i = 0; i < 10; i++) {
+			if(server.MIDs[i] == MID) {
+				server.duplicates++;
+				return false;
+			}
+		}
+		
+		//Else, if verifies if mid_index is greater than array size and adjusts it.
+		if(server.mid_index > 9) server.mid_index = 0;
+		
+		
+		//Updates the last MID list.
+		server.MIDs[server.mid_index] = MID; 
+		server.mid_index++;
+		
+		return true;
+		
+	}
 	
 	
 	public static void print_stats() {
+		//Simply prints out the Recieved and Duplicate stats of each Server.
+		
 		for(int i = 0; i < Servers.size(); i++) {
 			System.out.println("Mensagens recebidas por " +  Event.Servers.get(i).IP + " : " + Event.Servers.get(i).rec_msgs);
 			System.out.println("Duplicadas por : " + Event.Servers.get(i).IP + " : " + Event.Servers.get(i).duplicates);
@@ -41,11 +64,16 @@ public class Event {
 		for(int i = 0; i < Servers.size(); i++) {
 			if(inetAddress.equals(Servers.get(i).IP)){
 				Servers.get(i).last_datetime = last_Time;
-				if(MID > Servers.get(i).last_mid)
-					Servers.get(i).rec_msgs++;
-				else Servers.get(i).duplicates++;
+				//if(MID > Servers.get(i).last_mid)
+					//Servers.get(i).rec_msgs++;
+				//else Servers.get(i).duplicates++;
 				
-				Servers.get(i).last_mid = MID;
+				//Servers.get(i).last_mid = MID;
+				
+				
+				
+				if(appendMID(MID, Servers.get(i))) Servers.get(i).rec_msgs++;
+				
 				event_data();
 				return;
 			}	
@@ -104,6 +132,8 @@ public class Event {
 				System.out.println("Ultima CON foi: " + Servers.get(i).last_con + " Proxima CON deveria ser: " + next);
 			
 				return Integer.toString(next);
+				
+				
 			}
 				
 		}
