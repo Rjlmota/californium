@@ -32,6 +32,7 @@ public class Event {
 		for(int i = 0; i < Servers.size(); i++) {
 			System.out.println("Mensagens recebidas por " +  Event.Servers.get(i).IP + " : " + Event.Servers.get(i).rec_msgs);
 			System.out.println("Duplicadas por : " + Event.Servers.get(i).IP + " : " + Event.Servers.get(i).duplicates);
+			System.out.println("Mensagens perdidas por: " + Event.Servers.get(i).IP + " : " + Event.Servers.get(i).lost_msgs);
 		}
 	}
 	
@@ -41,9 +42,13 @@ public class Event {
 		for(int i = 0; i < Servers.size(); i++) {
 			if(inetAddress.equals(Servers.get(i).IP)){
 				Servers.get(i).last_datetime = last_Time;
+				
 				if(MID > Servers.get(i).last_mid)
 					Servers.get(i).rec_msgs++;
 				else Servers.get(i).duplicates++;
+				
+				if(!((Servers.get(i).last_mid +1) == MID)) Servers.get(i).lost_msgs++;
+				
 				
 				Servers.get(i).last_mid = MID;
 				event_data();
