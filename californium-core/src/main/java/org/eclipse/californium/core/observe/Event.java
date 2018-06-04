@@ -47,7 +47,7 @@ public class Event {
 					Servers.get(i).rec_msgs++;
 				else Servers.get(i).duplicates++;
 				
-				if(!((Servers.get(i).last_mid +1) == MID)) Servers.get(i).lost_msgs++;
+				if(((Servers.get(i).last_mid) >= MID)) Servers.get(i).lost_msgs++;
 				
 				
 				Servers.get(i).last_mid = MID;
