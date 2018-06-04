@@ -37,27 +37,42 @@ public class Event {
 	}
 	
 	
+	private static void validade (int current_mid,  Server server) {
+		//If current MID is higher than last MID, the message is new and should be counted.
+		if(current_mid > server.last_mid)
+			server.rec_msgs++;
+		
+		//If current MID is equal to the last MID, the message is duplicated;
+		else if (current_mid == server.last_mid) 
+			server.duplicates++;		
+		
+		
+		//If current MID is not one step ahead of the last_mid, than a message was lost.
+		else if(!((server.last_mid +1) == current_mid)) {
+			//Defines how many messages were lost.
+			int lap = current_mid - server.last_mid +1;
+			server.lost_msgs += lap;
+		}
+		
+	}
 	
-	public static void add_data(Timestamp last_Time, InetAddress inetAddress, int MID) {
-		for(int i = 0; i < Servers.size(); i++) {
-			if(inetAddress.equals(Servers.get(i).IP)){
+	
+	public static void add_data(Timestamp last_Time, InetAddress Address, int current_mid) {
+		
+		for(int i = 0; i < Servers.size(); i++) {	
+			if(Address.equals(Servers.get(i).IP)){
 				Servers.get(i).last_datetime = last_Time;
 				
-				if(MID > Servers.get(i).last_mid)
-					Servers.get(i).rec_msgs++;
-				else Servers.get(i).duplicates++;
 				
-				if(!((Servers.get(i).last_mid +1) == MID)) Servers.get(i).lost_msgs++;
+				validade(current_mid, Servers.get(i));	
 				
-				
-				Servers.get(i).last_mid = MID;
+				Servers.get(i).last_mid = current_mid;
 				event_data();
 				return;
-			}	
+			}
 		}
-		Servers.add(new Server());
-		Servers.get(Servers.size()-1).IP = inetAddress;
-		Servers.get(Servers.size()-1).last_datetime = last_Time;
+		//Server object was not found and a new Object is created to represent it.
+		Servers.add(new Server(Address, last_Time));
 		event_data();
 	}
 	
