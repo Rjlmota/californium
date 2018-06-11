@@ -93,7 +93,7 @@ public class CoapObserveRelation {
 	 * 
 	 */
 	
-	public List<String> teste = new ArrayList<String>();
+	//public List<String> teste = new ArrayList<String>();
 	public Timestamp last_Time;
 	
 	/**
