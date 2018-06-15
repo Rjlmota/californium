@@ -35,9 +35,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.Timestamp;
-//import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MessageObserver;
@@ -262,12 +259,12 @@ public class CoapObserveRelation {
 		System.out.println(last_Time);
 		
 		if((response.advanced().isNotification() && (response.advanced().getPayloadSize() < 8)))
-			Event.add_data(last_Time, response.advanced().getSource(), response.advanced().getMID());
+			Event.add_data(last_Time, response.advanced().getSource(), response.advanced().getMID(), response.advanced().getPayloadString());
 		
 		System.out.println("Source: " + response.advanced().getSource() + " " + response.advanced().getMID() + " " + response.advanced().getType());
 		System.out.println("Payload: " + response.advanced().getPayloadString());
 		//System.out.println("msg id: " + response.advanced().getMID());
-		//System.out.println("code: " + response.advanced().getType());
+		System.out.println("code: " + response.advanced().getType());
 		System.out.println("isAck: " + response.advanced().getPayloadSize());
 		
 		

@@ -28,6 +28,24 @@ public class Event {
 	
 	
 	
+
+	public static double harvestingRate() {
+		int harvestingNodes = 0;
+		if(observers > 0) {
+			for(Server server : Servers) 
+				if(obs_arr.contains(server.IP)){
+					if (server.isHarvesting == 1) {
+						harvestingNodes++;
+					}	
+				}
+			System.out.println(harvestingNodes + " " + observers);
+			return (harvestingNodes/observers);
+			
+		}else {
+			return 0;
+		}
+	}
+	
 	public static void print_stats() {
 		for(int i = 0; i < Servers.size(); i++) {
 			System.out.println("Mensagens recebidas por " +  Event.Servers.get(i).IP + " : " + Event.Servers.get(i).rec_msgs);
@@ -57,24 +75,25 @@ public class Event {
 	}
 	
 	
-	public static void add_data(Timestamp last_Time, InetAddress Address, int current_mid) {
+	public static void add_data(Timestamp last_Time, InetAddress Address, int current_mid, String payload) {
 		
 		for(int i = 0; i < Servers.size(); i++) {	
 			if(Address.equals(Servers.get(i).IP)){
 				Servers.get(i).last_datetime = last_Time;
 				
-
 				validade(current_mid, Servers.get(i));	
 
-				//Fuzzy.start(20, 1, 1, 1);
-				Fuzzy.start(20, 1, 3, 0.4);
+				int eventClass = Character.getNumericValue(payload.charAt(1));
+				String output = Fuzzy.start(observers, Servers.get(i).getLoss(), eventClass, harvestingRate());
+				System.out.println("INPUT--> " + observers + " " + Servers.get(i).getLoss() + " " + eventClass + " " + harvestingRate());
+				System.out.println("OUTPUT--> " + output);
 				Servers.get(i).last_mid = current_mid;
 				event_data();
 				return;
 			}
 		}
 		//Server object was not found and a new Object is created to represent it.
-		Servers.add(new Server(Address, last_Time));
+		Servers.add(new Server(Address, last_Time, Character.getNumericValue(payload.charAt(0))));
 		event_data();
 	}
 	
@@ -121,10 +140,18 @@ public class Event {
 				
 				next = Servers.get(i).last_con + observers + i;
 			
+				int event_Class = Character.getNumericValue(message.getPayloadString().charAt(0));
+				
+				String output = Fuzzy.start(observers, Servers.get(i).getLoss(), event_Class, harvestingRate());
+				System.out.println("INPUT----> + " + observers +" " + Servers.get(i).getLoss() +" " + event_Class +" " + harvestingRate());
+				System.out.println("OUTPUT_RECIEVED: " + output);				
 		
 				System.out.println("Ultima CON foi: " + Servers.get(i).last_con + " Proxima CON deveria ser: " + next);
 			
-				return Integer.toString(next);
+
+					
+				//return Integer.toString(next);
+				return output;
 			}
 				
 		}

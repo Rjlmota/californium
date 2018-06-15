@@ -12,10 +12,24 @@ public class Server{
 	 public int last_mid = 0;
 	 public int duplicates = 0;
 	 public int lost_msgs = 0;
+	 public int isHarvesting = 0;
 	 
-	 public Server(InetAddress IP_AD, Timestamp last) {
+	 public Server(InetAddress IP_AD, Timestamp last, int harvesting) {
 		 IP = IP_AD;
 		 last_datetime = last;
+		 isHarvesting = harvesting;
 	 }
+	 
+	 public float getLoss() {
+		 if(rec_msgs > 0 && lost_msgs > 0) {
+			 return lost_msgs/rec_msgs + lost_msgs;
+		 }
+		 else {
+			 return 0;
+		 }
+	 }
+	 
+
 	
 }
+	
