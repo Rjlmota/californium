@@ -68,7 +68,9 @@ public class Event {
 		//If current MID is not one step ahead of the last_mid, than a message was lost.
 		else if(((server.last_mid +1) < current_mid)) {
 			//Defines how many messages were lost.
+			System.out.println(server.last_mid + " - " + current_mid);
 			int lap = current_mid - server.last_mid +1;
+			System.out.println("LAP:" + lap);
 			server.lost_msgs += lap;
 		}
 		
