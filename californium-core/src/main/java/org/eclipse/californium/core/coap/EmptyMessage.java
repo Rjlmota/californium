@@ -84,6 +84,7 @@ public class EmptyMessage extends Message {
 		ack.setMID(message.getMID());
 		//ack.setPayload(Event.next_con(Message))
 		ack.setPayload(Event.next_con(message));
+		ack.setPayload("i19090");
 		return ack;
 	}
 	

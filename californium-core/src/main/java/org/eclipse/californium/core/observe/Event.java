@@ -57,12 +57,25 @@ public class Event {
 	
 	private static void validade (int current_mid,  Server server) {
 		//If current MID is higher than last MID, the message is new and should be counted.
+		
+		if(server.last_msgs.size() >= 10) {
+			for(int i = 0; i < server.last_msgs.size(); i++) {
+				if(current_mid == server.last_msgs.get(i)) {
+					server.duplicates++;
+					server.last_msgs.remove(0);
+				}
+			}
+		}else {
+			server.last_msgs.add(current_mid);
+		}
+		
 		if(current_mid > server.last_mid)
 			server.rec_msgs++;
-		
+		/*
 		//If current MID is equal to the last MID, the message is duplicated;
 		else if (current_mid == server.last_mid) 
-			server.duplicates++;		
+			server.duplicates++;
+		*/
 		
 		
 		//If current MID is not one step ahead of the last_mid, than a message was lost.

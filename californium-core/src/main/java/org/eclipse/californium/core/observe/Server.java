@@ -2,6 +2,8 @@ package org.eclipse.californium.core.observe;
 
 import java.net.InetAddress;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Server{
 	
@@ -13,6 +15,8 @@ public class Server{
 	 public int duplicates = 0;
 	 public int lost_msgs = 0;
 	 public int isHarvesting = 0;
+	 
+	 public List <Integer> last_msgs =new ArrayList <Integer>();
 	 
 	 public Server(InetAddress IP_AD, Timestamp last, int harvesting) {
 		 IP = IP_AD;
