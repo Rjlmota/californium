@@ -14,6 +14,11 @@ public class Fuzzy {
 			
 			//System.out.println("SEPARETED_OUTPUT " + separeted_output[0] + " " +  separeted_output[1] +" "+ separeted_output[2]);
 			
+			if (Character.isLetter(separeted_output[0].charAt(0))) {
+				System.out.println("5 0.5 0");
+			}
+			
+			
 			//INTERVAL:
 			float raw_interval = Float.parseFloat(separeted_output[0]);
 			int interval = (int) raw_interval;
@@ -51,10 +56,11 @@ public class Fuzzy {
 			
 			
 			
+			System.out.println(command + ": " + output);
 			//FUNCAO PRA CONSERTAR OS VALORES - TODO
 			output = parseOutput(output);
 			// System.out.println("OUTPUT " + output);
-			return output;
+			return output + event_class;
 
 		}
 		private String executeCommand(String command) {
