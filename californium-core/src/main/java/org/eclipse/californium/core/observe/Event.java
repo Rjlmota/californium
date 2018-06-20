@@ -112,7 +112,7 @@ public class Event {
 		printStats();
 	}
 	
-	public static String next_con(Message message) {
+	public static String outputInstructions(Message message) {
 		List<InetAddress> obs_list = new ArrayList<>(observersArray);
 		int next = 0;
 		for(int i = 0; i < obs_list.size(); i++){ 
