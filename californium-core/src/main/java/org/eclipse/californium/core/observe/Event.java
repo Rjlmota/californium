@@ -40,24 +40,51 @@ public class Event {
 	
 	private static void checkMessage (int current_mid,  Server server) {
 		//If current MID is higher than last MID, the message is new and should be counted.
+		
+		
+		if(server.last_mid == 0) return;
+		
+		System.out.println("-----------------");
+		System.out.println(server.last_msgs);
+		System.out.println("-----------------");
+		
+		System.out.println("CURRENT MID = " + current_mid + "LAST MID = " + server.last_mid);
+		
+		
+		if(server.lateMsgs.contains(current_mid)) {
+			System.out.println("Late msg rec");
+			server.lateMsgs.remove(current_mid);
+			server.lost_msgs--;
+		}
+		
+		
 		if(server.last_msgs.size() >= 10) {
+			System.out.println("DUPLICATE");
 			for(int i = 0; i < server.last_msgs.size(); i++) 
 				if(current_mid == server.last_msgs.get(i)) 
 					server.duplicates++;
 					server.last_msgs.remove(0);
+					
 		}else 
 			server.last_msgs.add(current_mid);
 		
-		if(current_mid > server.last_mid)
+		if(current_mid ==  server.last_mid + 1) {
 			server.rec_msgs++;
-	
+			
+		}
 		//If current MID is not one step ahead of the last_mid, than a message was lost.
 		else if(((server.last_mid +1) < current_mid)) {
+			System.out.println("LOSS");
 			//Defines how many messages were lost.
 			System.out.println(server.last_mid + " - " + current_mid);
 			int lap = current_mid - server.last_mid +1;
 			System.out.println("LAP:" + lap);
 			server.lost_msgs += lap;
+			
+			//Adds the MID of lost messages in a waiting list in case they are LATE.
+			for(int i = 1; i < lap+1; i++) {
+				server.lateMsgs.add(server.last_mid+i);
+			}
 		}
 		
 	}

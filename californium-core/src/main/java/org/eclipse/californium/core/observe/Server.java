@@ -17,7 +17,7 @@ public class Server{
 	 public int isHarvesting = 0;
 	 
 	 public List <Integer> last_msgs =new ArrayList <Integer>();
-	 
+	 public List <Integer> lateMsgs = new ArrayList <Integer>();
 	 //Constructor for creating a new Instance of this Class.
 	 public Server(InetAddress IP_AD, Timestamp last, int harvesting) {
 		 IP = IP_AD;
