@@ -17,13 +17,16 @@ public class Server{
 	 public int isHarvesting = 0;
 	 
 	 public List <Integer> last_msgs =new ArrayList <Integer>();
-	 
+	 public List <Integer> lateMsgs = new ArrayList <Integer>();
+	 //Constructor for creating a new Instance of this Class.
 	 public Server(InetAddress IP_AD, Timestamp last, int harvesting) {
 		 IP = IP_AD;
 		 last_datetime = last;
 		 isHarvesting = harvesting;
 	 }
 	 
+	 
+	 //Calculate the current loss rate of Node.
 	 public float getLoss() {
 		 if(rec_msgs > 0 && lost_msgs > 0) {
 			 return lost_msgs/rec_msgs + lost_msgs;

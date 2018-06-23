@@ -1,7 +1,6 @@
 package org.eclipse.californium.core.observe;
 
 
-//import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.observe.Fuzzy;
 import java.net.InetAddress;
 import java.sql.Timestamp;
@@ -12,164 +11,155 @@ import java.util.Set;
 import org.eclipse.californium.core.observe.Server;
 
 import org.eclipse.californium.core.coap.Message;
-
-//import org.eclipse.californium.core.CoapClient;
-//import org.eclipse.californium.core.CoapResponse;
- 
-
-
-
 public class Event {
-	
-	public static Set <InetAddress> obs_arr = new HashSet <InetAddress>();
-	private static int observers = 0;
-	public static List <Server> Servers = new ArrayList <Server>();
-	
-	
-	
-	
+	public static Set <InetAddress> observersArray = new HashSet <InetAddress>();
+	private static int numberOfObservers = 0;
+	public static List <Server> servers = new ArrayList <Server>();
 
 	public static double harvestingRate() {
 		int harvestingNodes = 0;
-		if(observers > 0) {
-			for(Server server : Servers) 
-				if(obs_arr.contains(server.IP)){
-					if (server.isHarvesting == 1) {
+		if(numberOfObservers > 0) {
+			for(Server server : servers) 
+				if(observersArray.contains(server.IP))
+					if (server.isHarvesting == 1) 
 						harvestingNodes++;
-					}	
-				}
-			System.out.println(harvestingNodes + " " + observers);
-			return (harvestingNodes/observers);
-			
-		}else {
+			System.out.println(harvestingNodes + " " + numberOfObservers);
+			return (harvestingNodes/numberOfObservers);
+		}else 
 			return 0;
+	}
+	
+	public static void printStats() {
+		for(int i = 0; i < servers.size(); i++) {
+			System.out.println("Mensagens recebidas por " +  Event.servers.get(i).IP + " : " + Event.servers.get(i).rec_msgs);
+			System.out.println("Duplicadas por : " + Event.servers.get(i).IP + " : " + Event.servers.get(i).duplicates);
+			System.out.println("Mensagens perdidas por: " + Event.servers.get(i).IP + " : " + Event.servers.get(i).lost_msgs);
 		}
 	}
 	
-	public static void print_stats() {
-		for(int i = 0; i < Servers.size(); i++) {
-			System.out.println("Mensagens recebidas por " +  Event.Servers.get(i).IP + " : " + Event.Servers.get(i).rec_msgs);
-			System.out.println("Duplicadas por : " + Event.Servers.get(i).IP + " : " + Event.Servers.get(i).duplicates);
-			System.out.println("Mensagens perdidas por: " + Event.Servers.get(i).IP + " : " + Event.Servers.get(i).lost_msgs);
-		}
-	}
 	
-	
-	private static void validade (int current_mid,  Server server) {
+	private static void checkMessage (int current_mid,  Server server) {
 		//If current MID is higher than last MID, the message is new and should be counted.
 		
-		if(server.last_msgs.size() >= 10) {
-			for(int i = 0; i < server.last_msgs.size(); i++) {
-				if(current_mid == server.last_msgs.get(i)) {
-					server.duplicates++;
-					server.last_msgs.remove(0);
-				}
-			}
-		}else {
-			server.last_msgs.add(current_mid);
+		
+		if(server.last_mid == 0) return;
+		
+		System.out.println("-----------------");
+		System.out.println(server.last_msgs);
+		System.out.println("-----------------");
+		
+		System.out.println("CURRENT MID = " + current_mid + "LAST MID = " + server.last_mid);
+		
+		
+		if(server.lateMsgs.contains(current_mid)) {
+			System.out.println("Late msg rec");
+			server.lateMsgs.remove(current_mid);
+			server.lost_msgs--;
 		}
 		
-		if(current_mid > server.last_mid)
+		
+		if(server.last_msgs.size() >= 10) {
+			System.out.println("DUPLICATE");
+			for(int i = 0; i < server.last_msgs.size(); i++) 
+				if(current_mid == server.last_msgs.get(i)) 
+					server.duplicates++;
+					server.last_msgs.remove(0);
+					
+		}else 
+			server.last_msgs.add(current_mid);
+		
+		if(current_mid ==  server.last_mid + 1) {
 			server.rec_msgs++;
-		/*
-		//If current MID is equal to the last MID, the message is duplicated;
-		else if (current_mid == server.last_mid) 
-			server.duplicates++;
-		*/
-		
-		
+			
+		}
 		//If current MID is not one step ahead of the last_mid, than a message was lost.
 		else if(((server.last_mid +1) < current_mid)) {
+			System.out.println("LOSS");
 			//Defines how many messages were lost.
 			System.out.println(server.last_mid + " - " + current_mid);
 			int lap = current_mid - server.last_mid +1;
 			System.out.println("LAP:" + lap);
 			server.lost_msgs += lap;
+			
+			//Adds the MID of lost messages in a waiting list in case they are LATE.
+			for(int i = 1; i < lap+1; i++) {
+				server.lateMsgs.add(server.last_mid+i);
+			}
 		}
 		
 	}
 	
 	
-	public static void add_data(Timestamp last_Time, InetAddress Address, int current_mid, String payload) {
-		
-		for(int i = 0; i < Servers.size(); i++) {	
-			if(Address.equals(Servers.get(i).IP)){
-				Servers.get(i).last_datetime = last_Time;
+	public static void updateData(Timestamp last_Time, InetAddress Address, int current_mid, String payload) {
+		for(int i = 0; i < servers.size(); i++) {	
+			if(Address.equals(servers.get(i).IP)){
+				servers.get(i).last_datetime = last_Time;
 				
-				validade(current_mid, Servers.get(i));	
+				checkMessage(current_mid, servers.get(i));	
 
 				int eventClass = Character.getNumericValue(payload.charAt(1));
-				String output = Fuzzy.start(observers, Servers.get(i).getLoss(), eventClass, harvestingRate());
-				System.out.println("INPUT--> " + observers + " " + Servers.get(i).getLoss() + " " + eventClass + " " + harvestingRate());
+				String output = Fuzzy.start(numberOfObservers, servers.get(i).getLoss(), eventClass, harvestingRate());
+				System.out.println("INPUT--> " + numberOfObservers + " " + servers.get(i).getLoss() + " " + eventClass + " " + harvestingRate());
 				System.out.println("OUTPUT--> " + output);
-				Servers.get(i).last_mid = current_mid;
-				event_data();
+				servers.get(i).last_mid = current_mid;
+				currentEventStats();
 				return;
 			}
 		}
 		//Server object was not found and a new Object is created to represent it.
-		Servers.add(new Server(Address, last_Time, Character.getNumericValue(payload.charAt(0))));
-		event_data();
+		servers.add(new Server(Address, last_Time, Character.getNumericValue(payload.charAt(0))));
+		currentEventStats();
 	}
 	
 	
-	private static int most_recent_event() {
+	private static int lastEvent() {
 		int index = 0;
 		long higher = 0;
-		for (int i = 0; i < Servers.size(); i++) 
-			if(Servers.get(i).last_datetime.getTime() > higher) { 
-				higher = Servers.get(i).last_datetime.getTime();
+		for (int i = 0; i < servers.size(); i++) 
+			if(servers.get(i).last_datetime.getTime() > higher) { 
+				higher = servers.get(i).last_datetime.getTime();
 				index = i;
 			}
 		return index;
 	}
 		
-	private static void event_data() {
-		observers = 0;
-		obs_arr.clear();
-		if(Servers.size() < 2){
-			System.out.println(observers + " mote is observing the event \n");
+	private static void currentEventStats() {
+		numberOfObservers = 0;
+		observersArray.clear();
+		if(servers.size() < 2){
+			System.out.println(numberOfObservers + " mote is observing the event \n");
 			return;
 		}
-		for(int i = 0; i < Servers.size(); i++)
-				if(Math.abs(Servers.get(most_recent_event()).last_datetime.getTime() - Servers.get(i).last_datetime.getTime()) < 100000) {
-					observers++;
-					obs_arr.add(Servers.get(i).IP);
+		for(int i = 0; i < servers.size(); i++)
+				if(Math.abs(servers.get(lastEvent()).last_datetime.getTime() - servers.get(i).last_datetime.getTime()) < 100000) {
+					numberOfObservers++;
+					observersArray.add(servers.get(i).IP);
 				}
-		System.out.println(observers + " mote(s) observing the event \n");
-		print_stats();
+		System.out.println(numberOfObservers + " mote(s) observing the event \n");
+		printStats();
 	}
 	
-	
-	
-	
-	public static String next_con(Message message) {
-		List<InetAddress> obs_list = new ArrayList<>(obs_arr);
+	public static String outputInstructions(Message message) {
+		List<InetAddress> obs_list = new ArrayList<>(observersArray);
 		int next = 0;
 		for(int i = 0; i < obs_list.size(); i++){ 
 			if (message.getSource().equals(obs_list.get((i)))) {
+				if(message.isConfirmable()) 
+					servers.get(i).last_con =  message.getMID();
 				
-				if(message.isConfirmable()) {
-					Servers.get(i).last_con =  message.getMID();
-				}
-				
-				next = Servers.get(i).last_con + observers + i;
+				next = servers.get(i).last_con + numberOfObservers + i;
 			
 				int event_Class = Character.getNumericValue(message.getPayloadString().charAt(0));
 				
-				String output = Fuzzy.start(observers, Servers.get(i).getLoss(), event_Class, harvestingRate());
-				System.out.println("INPUT----> + " + observers +" " + Servers.get(i).getLoss() +" " + event_Class +" " + harvestingRate());
+				String output = Fuzzy.start(numberOfObservers, servers.get(i).getLoss(), event_Class, harvestingRate());
+				System.out.println("INPUT----> + " + numberOfObservers +" " + servers.get(i).getLoss() +" " + event_Class +" " + harvestingRate());
 				System.out.println("OUTPUT_RECIEVED: " + output);				
-		
-				System.out.println("Ultima CON foi: " + Servers.get(i).last_con + " Proxima CON deveria ser: " + next);
+				System.out.println("Ultima CON foi: " + servers.get(i).last_con + " Proxima CON deveria ser: " + next);
 			
-
-					
-				//return Integer.toString(next);
 				return output;
 			}
 				
 		}
-	return "fail";
+		return null;
 	}
 }
