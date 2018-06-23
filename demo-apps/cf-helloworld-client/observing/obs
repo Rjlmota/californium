@@ -1,0 +1,17 @@
+n=0
+lines=0
+while true
+do
+	wget "http://[aaaa::200:0:0:1]" -O nodes.txt
+	n=$(wc -l < nodes.txt)
+	lines=$(($2*2 +1))
+	echo $n
+	
+	if [ $n -gt $lines ]
+	then
+		java -jar observe8.jar $2 5000000 | tee -a $1 
+		exit 0
+	fi
+
+	sleep 60
+done
