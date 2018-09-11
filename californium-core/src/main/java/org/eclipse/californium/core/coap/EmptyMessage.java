@@ -83,6 +83,13 @@ public class EmptyMessage extends Message {
 		ack.setDestinationPort(message.getSourcePort());
 		ack.setMID(message.getMID());
 		//ack.setPayload(Event.next_con(Message))
+		
+		if(Event.needToEliminate) {
+			if(message.getSource() == Event.toEliminate()) {
+				ack.setPayload("k");
+				Event.needToEliminate = false;
+			}
+		}
 		ack.setPayload(Event.outputInstructions(message));
 		//ack.setPayload("i19090");
 		return ack;

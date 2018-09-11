@@ -27,9 +27,9 @@ public class Server{
 	 
 	 
 	 //Calculate the current loss rate of Node.
-	 public float getLoss() {
+	 public double getLoss() {
 		 if(rec_msgs > 0 && lost_msgs > 0) {
-			 return lost_msgs/rec_msgs + lost_msgs;
+			 return lost_msgs/((double)(rec_msgs + lost_msgs));
 		 }
 		 else {
 			 return 0;

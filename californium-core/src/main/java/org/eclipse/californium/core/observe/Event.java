@@ -23,8 +23,8 @@ public class Event {
 				if(observersArray.contains(server.IP))
 					if (server.isHarvesting == 1) 
 						harvestingNodes++;
-			System.out.println(harvestingNodes + " " + numberOfObservers);
-			return (harvestingNodes/numberOfObservers);
+			System.out.println("HARVESTING: " + harvestingNodes + " " + numberOfObservers);
+			return (harvestingNodes/(double)numberOfObservers);
 		}else 
 			return 0;
 	}
@@ -37,6 +37,21 @@ public class Event {
 		}
 	}
 	
+	
+	public static Boolean needToEliminate = false;
+	
+	public static InetAddress toEliminate() {
+		double currentLoss = -1;
+		 InetAddress eliminate = null;
+		for(int i = 0; i < servers.size(); i++) {
+			if(servers.get(i).getLoss() > currentLoss) {
+				if(servers.get(i).isHarvesting == 1) {
+					eliminate = servers.get(i).IP;
+				}
+			}
+		}
+		return eliminate;
+	}
 	
 	private static void checkMessage (int current_mid,  Server server) {
 		//If current MID is higher than last MID, the message is new and should be counted.
@@ -133,6 +148,7 @@ public class Event {
 				System.out.println("OUTPUT--> " + output);
 				//servers.get(i).last_mid = current_mid;
 				currentEventStats();
+				
 				return;
 			}
 		}
@@ -184,7 +200,7 @@ public class Event {
 				String output = Fuzzy.start(numberOfObservers, servers.get(i).getLoss(), event_Class, harvestingRate());
 				System.out.println("INPUT----> + " + numberOfObservers +" " + servers.get(i).getLoss() +" " + event_Class +" " + harvestingRate());
 				System.out.println("OUTPUT_RECIEVED: " + output);				
-				System.out.println("Ultima CON foi: " + servers.get(i).last_con + " Proxima CON deveria ser: " + next);
+				//System.out.println("Ultima CON foi: " + servers.get(i).last_con + " Proxima CON deveria ser: " + next);
 			
 				return output;
 			}

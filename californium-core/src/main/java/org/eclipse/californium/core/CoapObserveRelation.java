@@ -265,7 +265,7 @@ public class CoapObserveRelation {
 		System.out.println("Payload: " + response.advanced().getPayloadString());
 		//System.out.println("msg id: " + response.advanced().getMID());
 		System.out.println("code: " + response.advanced().getType());
-		System.out.println("isAck: " + response.advanced().getPayloadSize());
+		//System.out.println("isAck: " + response.advanced().getPayloadSize());
 		
 		
 		//teste.add(response.advanced().getPayloadString());

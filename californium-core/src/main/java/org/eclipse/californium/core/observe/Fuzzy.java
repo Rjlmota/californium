@@ -16,6 +16,15 @@ public class Fuzzy {
 			
 			return output;
 		}
+		
+		
+		private static String parseCon(String value) {
+			float raw_input = Float.parseFloat(value);
+			int input = (int) (raw_input*100);
+			System.out.println("INPUT CON: " + input);
+			String output = String.format("%02d", input);
+			return output;
+		}
 		//Formating raw output.
 		private static String parseOutput(String output) {	
 			//Splits out String into an array of Strings, used to conver the values to Non-String values. 
@@ -25,11 +34,15 @@ public class Fuzzy {
 			String formatted_interval = formattedFloat(separeted_output[0]);
 			
 			//CONFIRMAVEIS:
-			String formatted_confirmable = formattedFloat(separeted_output[1]);
+			String formatted_confirmable = parseCon(separeted_output[1]);
 			
 			//ELMINATE:
 			float eliminate = Float.parseFloat(separeted_output[2]);
 			int toEliminate = (int) eliminate;
+
+			if(toEliminate == 1) {
+				Event.needToEliminate = true;
+			}
 			
 			String result = 'i' +formatted_interval + formatted_confirmable + toEliminate;
 			
@@ -37,7 +50,7 @@ public class Fuzzy {
 			}
 	
 	
-		public static String start(int node_number, float loss_rate, int event_class, double harvesting) {
+		public static String start(int node_number, double loss_rate, int event_class, double harvesting) {
 			//Creating command and executing it on Shell, in order to call Fuzzy module
 			Fuzzy obj = new Fuzzy();
 			String command = "./main " + node_number + " " + loss_rate + " " + event_class + " " + harvesting;
