@@ -45,7 +45,7 @@ public class Event {
 		 InetAddress eliminate = null;
 		for(int i = 0; i < servers.size(); i++) {
 			if(servers.get(i).getLoss() > currentLoss) {
-				if(servers.get(i).isHarvesting == 1) {
+				if(servers.get(i).isHarvesting == 0) {
 					eliminate = servers.get(i).IP;
 				}
 			}
@@ -143,8 +143,8 @@ public class Event {
 				checkMessage(current_mid, servers.get(i));	
 
 				int eventClass = Character.getNumericValue(payload.charAt(1));
-				String output = Fuzzy.start(numberOfObservers, servers.get(i).getLoss(), eventClass, harvestingRate());
-				System.out.println("INPUT--> " + numberOfObservers + " " + servers.get(i).getLoss() + " " + eventClass + " " + harvestingRate());
+				String output = Fuzzy.start(numberOfObservers/(double)servers.size(), servers.get(i).getLoss(), eventClass, harvestingRate());
+				System.out.println("INPUT--> " + (numberOfObservers/(double)servers.size()) + " " + servers.get(i).getLoss() + " " + eventClass + " " + harvestingRate());
 				System.out.println("OUTPUT--> " + output);
 				//servers.get(i).last_mid = current_mid;
 				currentEventStats();
