@@ -15,7 +15,9 @@ public class Event {
 	public static Set <InetAddress> observersArray = new HashSet <InetAddress>();
 	private static int numberOfObservers = 0;
 	public static List <Server> servers = new ArrayList <Server>();
-
+	public static long LastEliminationTime = System.currentTimeMillis();
+	
+	
 	public static double harvestingRate() {
 		int harvestingNodes = 0;
 		if(numberOfObservers > 0) {
@@ -40,6 +42,7 @@ public class Event {
 	
 	public static Boolean needToEliminate = false;
 	
+	
 	public static InetAddress toEliminate() {
 		double currentLoss = -1;
 		 InetAddress eliminate = null;
@@ -47,6 +50,7 @@ public class Event {
 			if(servers.get(i).getLoss() > currentLoss) {
 				if(servers.get(i).isHarvesting == 0) {
 					eliminate = servers.get(i).IP;
+					servers.remove(i);
 				}
 			}
 		}
@@ -195,10 +199,13 @@ public class Event {
 				
 				next = servers.get(i).last_con + numberOfObservers + i;
 			
-				int event_Class = Character.getNumericValue(message.getPayloadString().charAt(0));
+				int event_Class = Character.getNumericValue(message.getPayloadString().charAt(1));
+				int isHarvester = Character.getNumericValue(message.getPayloadString().charAt(0));
 				
-				String output = Fuzzy.start(numberOfObservers, servers.get(i).getLoss(), event_Class, harvestingRate());
-				System.out.println("INPUT----> + " + numberOfObservers +" " + servers.get(i).getLoss() +" " + event_Class +" " + harvestingRate());
+				System.out.println("ISHARVESTER: " + isHarvester);
+				System.out.println("EVENT_CLASS: " + event_Class);
+				String output = Fuzzy.start(numberOfObservers/(double)servers.size(), servers.get(i).getLoss(), event_Class, harvestingRate());
+				System.out.println("INPUT----> + " +numberOfObservers/(double)servers.size() +" " + servers.get(i).getLoss() +" " + event_Class +" " + harvestingRate());
 				System.out.println("OUTPUT_RECIEVED: " + output);				
 				//System.out.println("Ultima CON foi: " + servers.get(i).last_con + " Proxima CON deveria ser: " + next);
 			

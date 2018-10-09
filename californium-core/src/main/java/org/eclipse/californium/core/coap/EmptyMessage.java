@@ -85,13 +85,18 @@ public class EmptyMessage extends Message {
 		//ack.setPayload(Event.next_con(Message))
 		
 		if(Event.needToEliminate) {
-			if(message.getSource() == Event.toEliminate()) {
+			System.out.println("Got into deletion " + Event.toEliminate().toString());
+			if(message.getSource().equals(Event.toEliminate())) {
+				System.out.println("Sent Kill");
 				ack.setPayload("k");
 				Event.needToEliminate = false;
 			}
 		}
+		else {
 		ack.setPayload(Event.outputInstructions(message));
 		//ack.setPayload("i19090");
+		}
+		System.out.println("ACK CONTENT: " + ack.getPayloadString());
 		return ack;
 	}
 	

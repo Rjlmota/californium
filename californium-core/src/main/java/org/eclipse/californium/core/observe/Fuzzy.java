@@ -18,11 +18,11 @@ public class Fuzzy {
 		}
 		
 		
-		private static String parseCon(String value) {
+		private static String parseEli(String value) {
 			float raw_input = Float.parseFloat(value);
-			int input = (int) (raw_input*100);
-			System.out.println("INPUT CON: " + input);
-			String output = String.format("%02d", input);
+			int input = (int) (raw_input);
+			System.out.println("INPUT ELIMINATION: " + input);
+			String output = String.format("%d", input);
 			return output;
 		}
 		//Formating raw output.
@@ -34,14 +34,25 @@ public class Fuzzy {
 			String formatted_interval = formattedFloat(separeted_output[0]);
 			
 			//CONFIRMAVEIS:
-			String formatted_confirmable = parseCon(separeted_output[1]);
+			String eliminate = parseEli(separeted_output[1]);
 			
 			//ELMINATE:
-			float eliminate = Float.parseFloat(separeted_output[2]);
-			int toEliminate = (int) eliminate;
+			int formatted_confirmable = (int)(100*Float.parseFloat(separeted_output[2]));
+			
+			int toEliminate = Integer.parseInt(eliminate);
 
 			if(toEliminate == 1) {
-				Event.needToEliminate = true;
+				//Event.needToEliminate = true;
+				if(System.currentTimeMillis() - Event.LastEliminationTime > 100000) {
+					Event.needToEliminate = true;
+					toEliminate = 1;
+					System.out.println("Eliminating");
+					Event.LastEliminationTime = System.currentTimeMillis();
+				}else {
+					Event.needToEliminate = false;
+					toEliminate = 0;
+				}
+
 			}
 			
 			String result = 'i' +formatted_interval + formatted_confirmable + toEliminate;
@@ -62,6 +73,7 @@ public class Fuzzy {
 			
 			System.out.println(command + ": " + output);
 			output = parseOutput(output);
+			System.out.println("AQUI OLHA: " + output);
 			return output + event_class;
 
 		}
