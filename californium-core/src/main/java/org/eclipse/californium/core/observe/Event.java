@@ -46,14 +46,16 @@ public class Event {
 	public static InetAddress toEliminate() {
 		double currentLoss = -1;
 		 InetAddress eliminate = null;
+		 int indexEliminate = 0;
 		for(int i = 0; i < servers.size(); i++) {
 			if(servers.get(i).getLoss() > currentLoss) {
 				if(servers.get(i).isHarvesting == 0) {
 					eliminate = servers.get(i).IP;
-					servers.remove(i);
+					indexEliminate = i;
 				}
 			}
 		}
+		servers.remove(indexEliminate);
 		return eliminate;
 	}
 	
