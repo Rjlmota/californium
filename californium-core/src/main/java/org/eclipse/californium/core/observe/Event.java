@@ -142,6 +142,10 @@ public class Event {
 	
 	
 	public static void updateData(Timestamp last_Time, InetAddress Address, int current_mid, String payload) {
+		
+		if(payload.length() != 2)
+			return;
+		
 		for(int i = 0; i < servers.size(); i++) {	
 			if(Address.equals(servers.get(i).IP)){
 				servers.get(i).last_datetime = last_Time;
@@ -194,6 +198,11 @@ public class Event {
 	public static String outputInstructions(Message message) {
 		List<InetAddress> obs_list = new ArrayList<>(observersArray);
 		int next = 0;
+		
+		if(message.getPayloadSize() != 2) 
+			return null;
+		
+		
 		for(int i = 0; i < obs_list.size(); i++){ 
 			if (message.getSource().equals(obs_list.get((i)))) {
 				if(message.isConfirmable()) 
