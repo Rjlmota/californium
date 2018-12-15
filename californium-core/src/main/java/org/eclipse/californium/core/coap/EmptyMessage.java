@@ -83,7 +83,7 @@ public class EmptyMessage extends Message {
 		ack.setDestinationPort(message.getSourcePort());
 		ack.setMID(message.getMID());
 		//ack.setPayload(Event.next_con(Message))
-		
+		System.out.println("NeedToELiminate: " + Event.needToEliminate);
 		if(Event.needToEliminate) {
 			System.out.println("Got into deletion " + Event.toEliminate().toString());
 			if(message.getSource().equals(Event.toEliminate())) {
@@ -93,10 +93,11 @@ public class EmptyMessage extends Message {
 				Event.needToEliminate = false;
 				Event.LastEliminationTime = System.currentTimeMillis();
 			}
-			else {
-				ack.setPayload(Event.outputInstructions(message));
-				}
-		}
+
+		}else {
+			System.out.println("Setting payload: " + Event.outputInstructions(message));
+			ack.setPayload(Event.outputInstructions(message));
+			}
 
 		System.out.println("ACK CONTENT: " + ack.getPayloadString());
 		return ack;
