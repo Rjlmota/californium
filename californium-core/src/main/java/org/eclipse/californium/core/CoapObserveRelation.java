@@ -39,6 +39,7 @@ import java.sql.Timestamp;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MessageObserver;
 import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.CoAP.Type;
 import org.eclipse.californium.core.network.Endpoint;
 import org.eclipse.californium.core.observe.ObserveNotificationOrderer;
 import org.eclipse.californium.elements.util.DaemonThreadFactory;
@@ -91,7 +92,7 @@ public class CoapObserveRelation {
 	 */
 	
 	//public List<String> teste = new ArrayList<String>();
-	public Timestamp last_Time;
+	public Timestamp currentTime;
 	
 	/**
 	 * Constructs a new CoapObserveRelation with the specified request.
@@ -255,20 +256,11 @@ public class CoapObserveRelation {
 	 *         {@code false} otherwise.
 	 */
 	protected boolean onResponse(CoapResponse response) {
-		last_Time = new Timestamp(System.currentTimeMillis());
-		System.out.println(last_Time);
+		currentTime = new Timestamp(System.currentTimeMillis());
+		//Function to pass information about incoming message...
+		//incomingMessage(response, currentTime);
+		Event.getData(response);
 		
-		if((response.advanced().isNotification() && (response.advanced().getPayloadSize() < 8)))
-			Event.updateData(last_Time, response.advanced().getSource(), response.advanced().getMID(), response.advanced().getPayloadString());
-		
-		System.out.println("Source: " + response.advanced().getSource() + " " + response.advanced().getMID() + " " + response.advanced().getType());
-		System.out.println("Payload: " + response.advanced().getPayloadString());
-		//System.out.println("msg id: " + response.advanced().getMID());
-		System.out.println("code: " + response.advanced().getType());
-		//System.out.println("isAck: " + response.advanced().getPayloadSize());
-		
-		
-		//teste.add(response.advanced().getPayloadString());
 		if (null != response && orderer.isNew(response.advanced())) {
 			current = response;
 			prepareReregistration(response, 2000);

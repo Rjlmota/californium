@@ -91,7 +91,7 @@ public class EmptyMessage extends Message {
 				System.out.println("Sent Kill");
 				ack.setPayload("k");
 				Event.needToEliminate = false;
-				Event.LastEliminationTime = System.currentTimeMillis();
+				Event.lastEliminationTime = System.currentTimeMillis();
 			}
 
 		}else {

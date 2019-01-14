@@ -81,8 +81,8 @@ public class GETClient {
 				new CoapHandler() {
 				@Override public void onLoad(CoapResponse response) {
 				String content = response.getResponseText();
-				System.out.println("-CO0----------");
-				System.out.println(content);
+				//System.out.println("-CO0----------");
+				//System.out.println(content);
 				}
 	
 				@Override public void onError() {

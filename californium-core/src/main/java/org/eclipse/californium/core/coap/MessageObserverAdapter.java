@@ -46,7 +46,7 @@ public abstract class MessageObserverAdapter implements MessageObserver {
 	@Override
 	public void onAcknowledgement() {
 		// empty default implementation
-		System.out.println("OnAck");
+		//System.out.println("OnAck");
 	}
 
 	@Override
