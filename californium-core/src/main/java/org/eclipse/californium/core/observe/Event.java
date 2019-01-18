@@ -146,7 +146,7 @@ public class Event {
 		//If the last mid is 0, then this is the first message recieved. Thus, the last mid does not count.
 		if(server.last_mid == 0) { 
 			server.last_mid = current_mid;
-			return true;
+			return false;
 		}
 		
 		System.out.println("CURRENT MID = " + current_mid + "LAST MID = " + server.last_mid);
@@ -187,6 +187,7 @@ public class Event {
 			}
 			
 			server.last_mid = current_mid;
+			return true;
 		}
 		return false;
 	}
@@ -199,6 +200,9 @@ public class Event {
 		
 		
 		if(payload.length() != 2)
+			return 0;
+		
+		if(!response.advanced().isNotification())
 			return 0;
 		
 		
