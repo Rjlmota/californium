@@ -19,10 +19,11 @@
  ******************************************************************************/
 package org.eclipse.californium.core.coap;
 
+import java.net.InetAddress;
 import java.util.Arrays;
 
 import org.eclipse.californium.core.observe.Event;
-
+import org.eclipse.californium.core.observe.Server;
 import org.eclipse.californium.core.coap.CoAP.Type;
 
 /**
@@ -84,21 +85,25 @@ public class EmptyMessage extends Message {
 		ack.setMID(message.getMID());
 		//ack.setPayload(Event.next_con(Message))
 		System.out.println("NeedToELiminate: " + Event.needToEliminate);
-		if(Event.needToEliminate) {
-			System.out.println("Got into deletion " + Event.toEliminate().toString());
-			if(message.getSource().equals(Event.toEliminate())) {
-				System.out.println("This node will be removed: " + message.getSource());
-				System.out.println("Sent Kill");
-				ack.setPayload("k");
-				Event.needToEliminate = false;
-				Event.lastEliminationTime = System.currentTimeMillis();
-			}
-
+		
+		Server eli = Event.toEliminate();
+		
+		if(Event.needToEliminate && eli != null && message.getSource().equals(eli.IP)) {
+			System.out.println("Got into deletion " + eli.toString());
+			System.out.println("This node will be removed: " + message.getSource());
+			System.out.println("Sent Kill");
+			ack.setPayload("k");
+			Event.Stats.eliminations++;
+			
+			Event.needToEliminate = false;
+			Event.servers.remove(eli);
+			
+			Event.lastEliminationTime = System.currentTimeMillis();
+			
 		}else {
 			System.out.println("Setting payload: " + Event.outputInstructions(message));
 			ack.setPayload(Event.outputInstructions(message));
-			}
-
+		}
 		System.out.println("ACK CONTENT: " + ack.getPayloadString());
 		return ack;
 	}

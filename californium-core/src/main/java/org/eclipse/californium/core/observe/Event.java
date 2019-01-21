@@ -21,6 +21,7 @@ public class Event {
 		static int lost[] = {0, 0};
 		public static int CON = 0;
 		public static int NON = 0;
+		public static int eliminations = 0;
 	}
 	
 	
@@ -68,45 +69,50 @@ public class Event {
 		}
 				
 		
-			int total_messages = Stats.recieved[0]+Stats.recieved[1];
-			int total_loss = Stats.lost[0] + Stats.lost[1];
-			double loss_rate= 0;
-			
-			if((total_messages+total_loss) > 0) {
-				loss_rate = total_loss*1.0/((total_messages+total_loss)*1.0);
-			}
-			
-			System.out.print("\n\n------------------------\n");
-			System.out.println("NORMAL\tHARVESTING");
-			System.out.println(Stats.recieved[0]+"\t"+Stats.recieved[1]);
-			System.out.println(Stats.lost[0] + "\t"+ Stats.lost[1]);
-			
-			
-			System.out.println("CURRENT LOSS RATE: " + loss_rate);
-			System.out.println("TOTAL MESSAGES: " + total_messages);
-			System.out.println("CONFIRMABLE: " + Stats.CON);
-			System.out.println("NON CONFIRMABLE: " + Stats.NON);
-			System.out.print("\n\n------------------------");
+		int total_messages = Stats.recieved[0]+Stats.recieved[1];
+		int total_loss = Stats.lost[0] + Stats.lost[1];
+		double loss_rate= 0;
+		
+		if((total_messages+total_loss) > 0) {
+			loss_rate = total_loss*1.0/((total_messages+total_loss)*1.0);
+		}
+		
+		System.out.print("\n\n------------------------\n");
+		System.out.println("NORMAL\tHARVESTING");
+		System.out.println(Stats.recieved[0]+"\t"+Stats.recieved[1]);
+		System.out.println(Stats.lost[0] + "\t"+ Stats.lost[1]);
+		
+		
+		System.out.println("CURRENT LOSS RATE: " + loss_rate);
+		System.out.println("TOTAL MESSAGES: " + total_messages);
+		System.out.println("CONFIRMABLE: " + Stats.CON);
+		System.out.println("NON CONFIRMABLE: " + Stats.NON);
+		System.out.println("Eliminations: " + Stats.eliminations);
+		System.out.print("\n\n------------------------");
 		
 	}
 	
 	
 
 	
-	public static InetAddress toEliminate() {
+	public static Server toEliminate() {
+		
+		Server eli = null;
+		
 		double currentLoss = -1;
 		 InetAddress eliminate = null;
 		 int indexEliminate = 0;
 		for(int i = 0; i < servers.size(); i++) {
 			if(servers.get(i).getLoss() > currentLoss) {
 				if(servers.get(i).isHarvesting == 0) {
-					eliminate = servers.get(i).IP;
+					//eliminate = servers.get(i).IP;
+					eli = servers.get(i);
 					indexEliminate = i;
 				}
 			}
 		}
-		servers.remove(indexEliminate);
-		return eliminate;
+		//servers.remove(indexEliminate);
+		return eli;
 	}
 	
 	private static boolean lateMessageHandler(int current_mid, Server server) {

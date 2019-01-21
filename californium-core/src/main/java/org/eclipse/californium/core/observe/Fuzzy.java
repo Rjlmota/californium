@@ -42,8 +42,9 @@ public class Fuzzy {
 			int toEliminate = Integer.parseInt(eliminate);
 
 			if(toEliminate == 1) {
+				System.out.println("Elimination worked");
 				//Event.needToEliminate = true;
-				if(System.currentTimeMillis() - Event.lastEliminationTime > 800000) {
+				if(System.currentTimeMillis() - Event.lastEliminationTime > 180000) {
 					Event.needToEliminate = true;
 					toEliminate = 1;
 					System.out.println("Eliminating");
