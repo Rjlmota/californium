@@ -22,6 +22,7 @@ public class Event {
 		public static int CON = 0;
 		public static int NON = 0;
 		public static int eliminations = 0;
+		public static double loss_rate = 0;
 	}
 	
 	
@@ -76,6 +77,8 @@ public class Event {
 		if((total_messages+total_loss) > 0) {
 			loss_rate = total_loss*1.0/((total_messages+total_loss)*1.0);
 		}
+		
+		Stats.loss_rate = loss_rate;
 		
 		System.out.print("\n\n------------------------\n");
 		System.out.println("NORMAL\tHARVESTING");
@@ -152,7 +155,7 @@ public class Event {
 		//If the last mid is 0, then this is the first message recieved. Thus, the last mid does not count.
 		if(server.last_mid == 0) { 
 			server.last_mid = current_mid;
-			return false;
+			return true;
 		}
 		
 		System.out.println("CURRENT MID = " + current_mid + "LAST MID = " + server.last_mid);
@@ -162,7 +165,7 @@ public class Event {
 		//If the message has a lower mid than the last, then it is late or a duplicate.
 		if(current_mid < server.last_mid) {
 			lateMessageHandler(current_mid, server);
-			return false;
+			return true;
 		}
 		//If the message is not lower than mid, then it can be accounted as one of the latest messages without problems.
 		server.last_msgs.add(current_mid);
@@ -288,7 +291,7 @@ public class Event {
 				
 				//System.out.println("ISHARVESTER: " + isHarvester);
 				//System.out.println("EVENT_CLASS: " + event_Class);
-				String output = Fuzzy.start(numberOfObservers/(double)servers.size(), servers.get(i).getLoss(), event_Class, harvestingRate());
+				String output = Fuzzy.start(numberOfObservers/(double)servers.size(), Stats.loss_rate, event_Class, harvestingRate());
 				//System.out.println("INPUT----> + " +numberOfObservers/(double)servers.size() +" " + servers.get(i).getLoss() +" " + event_Class +" " + harvestingRate());
 				//System.out.println("OUTPUT_RECIEVED: " + output);				
 				//System.out.println("Ultima CON foi: " + servers.get(i).last_con + " Proxima CON deveria ser: " + next);

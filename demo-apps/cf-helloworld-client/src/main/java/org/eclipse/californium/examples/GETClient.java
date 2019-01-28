@@ -16,6 +16,8 @@
  **************************/
 package org.eclipse.californium.examples;
 
+import java.io.FileNotFoundException;
+
 //import org.eclipse.californium.core.observe.Event;
 
 //import org.eclipse.californium.core.observe.Event;
@@ -30,6 +32,7 @@ import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.Utils;
+import org.eclipse.californium.core.observe.Event;
 
 
 //import org.eclipse.californium.core.observe.Event;
@@ -49,7 +52,7 @@ public class GETClient {
 	 *
 	 */
 	
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 		
 		
 		int obs_number = Integer.parseInt(args[0]);
@@ -114,6 +117,20 @@ public class GETClient {
 			 */
 			CoapResponse response = client_arr[0].get();
 			
+			
+			FileOutputStream out = new FileOutputStream(args[2], true);
+			
+			String content = Event.Stats.loss_rate+"\t"+Event.Stats.eliminations+"\n";
+			
+			byte[] strToBytes = content.getBytes();
+
+			out.write(strToBytes);
+			out.close();
+			
+			
+			
+			
+			/* 
 			if (response!=null) {
 				
 				System.out.println(response.getCode());
@@ -134,7 +151,7 @@ public class GETClient {
 				}
 			} else {
 				System.out.println("No response received.");
-			}
+			}*/
 			
 		} else {
 			// display help
