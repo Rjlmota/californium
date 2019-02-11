@@ -84,20 +84,31 @@ public class EmptyMessage extends Message {
 		ack.setDestinationPort(message.getSourcePort());
 		ack.setMID(message.getMID());
 		//ack.setPayload(Event.next_con(Message))
-		System.out.println("NeedToELiminate: " + Event.needToEliminate);
 		
 		Server eli = Event.toEliminate();
+		
+		
+		System.out.println("NeedToELiminate: " + Event.needToEliminate + " " + eli.IP);
+		
+		
+		for(Server server : Event.removed)
+			if(message.getSource().equals(server.IP)){
+				System.out.println("Already Eliminated!\n");
+				ack.setPayload("k");
+				return ack;
+			}
 		
 		if(Event.needToEliminate && eli != null && message.getSource().equals(eli.IP)) {
 			System.out.println("Got into deletion " + eli.toString());
 			System.out.println("This node will be removed: " + message.getSource());
-			System.out.println("Sent Kill");
+			System.out.println("SENT KILL!!!\n!!!!!!!\n!!!!!!!!\n");
 			ack.setPayload("k");
 			Event.Stats.eliminations++;
 			
 			Event.needToEliminate = false;
-			Event.servers.remove(eli);
-			
+			//Event.servers.remove(eli);
+			System.out.println("TAMANHODOARRAYDESERVERS: " + Event.servers.size());
+			Event.removed.add(eli);
 			Event.lastEliminationTime = System.currentTimeMillis();
 			
 		}else {

@@ -31,11 +31,12 @@ public class Event {
 	private static int numberOfObservers = 0;
 	//Attay to store all servers that did communicate with this client.
 	public static List <Server> servers = new ArrayList <Server>();
+	public static List <Server> removed = new ArrayList <Server>();
 	
 	//Timestamp to indicate the last system time that an elimination occurred.
 	public static long lastEliminationTime = System.currentTimeMillis();
 	//Timestamp to indicate the last time any relevant message was recieved
-	public static Timestamp lastTimeRecieved = new Timestamp(System.currentTimeMillis());
+	public static long lastTimeRecieved;
 	
 	//Public variable to indicate if the program needs to eliminate one node.
 	public static Boolean needToEliminate = false;
@@ -62,11 +63,17 @@ public class Event {
 	
 	
 	public static void printStats() {
-		
+		System.out.println("IP\tRecebidas\tPerdidas\tObserving\tLast Message\n");
 		for(int i = 0; i < servers.size(); i++) {
-			System.out.println("Mensagens recebidas por " +  Event.servers.get(i).IP + " : " + Event.servers.get(i).rec_msgs);
-			System.out.println("Duplicadas por : " + Event.servers.get(i).IP + " : " + Event.servers.get(i).duplicates);
-			System.out.println("Mensagens perdidas por: " + Event.servers.get(i).IP + " : " + Event.servers.get(i).lost_msgs);
+			//System.out.println("Mensagens recebidas por " +  Event.servers.get(i).IP + " : " + Event.servers.get(i).rec_msgs);
+			//System.out.println("Duplicadas por : " + Event.servers.get(i).IP + " : " + Event.servers.get(i).duplicates);
+			//System.out.println("Mensagens perdidas por: " + Event.servers.get(i).IP + " : " + Event.servers.get(i).lost_msgs);
+			System.out.println(Event.servers.get(i).IP + "\t" + Event.servers.get(i).rec_msgs + "\t" + Event.servers.get(i).lost_msgs + "\t" + Event.servers.get(i).isObserving + "\t" + Event.servers.get(i).last_datetime);
+		}
+		
+		System.out.println("Removed nodes: \n");
+		for(int i = 0; i < removed.size(); i++) {
+			System.out.println(removed.get(i).IP);
 		}
 				
 		
@@ -106,7 +113,7 @@ public class Event {
 		 InetAddress eliminate = null;
 		 int indexEliminate = 0;
 		for(int i = 0; i < servers.size(); i++) {
-			if(servers.get(i).getLoss() > currentLoss) {
+			if(servers.get(i).getLoss() > currentLoss && !removed.contains(servers.get(i))) {
 				if(servers.get(i).isHarvesting == 0) {
 					//eliminate = servers.get(i).IP;
 					eli = servers.get(i);
@@ -151,6 +158,9 @@ public class Event {
 
 	private static boolean registerMessage (int current_mid,  Server server) {
 		//If current MID is higher than last MID, the message is new and should be counted.
+		
+		
+		server.last_datetime = System.currentTimeMillis();
 		
 		//If the last mid is 0, then this is the first message recieved. Thus, the last mid does not count.
 		if(server.last_mid == 0) { 
@@ -236,6 +246,12 @@ public class Event {
 			}
 		}
 		//Server object was not found and a new Object is created to represent it.
+		
+		for(Server server : removed) {
+			if(server.IP.equals(senderAddress))
+				return 0;
+		}
+		
 		servers.add(new Server(senderAddress, lastTimeRecieved, Character.getNumericValue(payload.charAt(0))));
 		updateStats();
 		return 0;
@@ -246,8 +262,8 @@ public class Event {
 		int index = 0;
 		long higher = 0;
 		for (int i = 0; i < servers.size(); i++) 
-			if(servers.get(i).last_datetime.getTime() > higher) { 
-				higher = servers.get(i).last_datetime.getTime();
+			if(servers.get(i).last_datetime > higher) { 
+				higher = servers.get(i).last_datetime;
 				index = i;
 			}
 		return servers.get(index);
@@ -263,9 +279,12 @@ public class Event {
 			return;
 		}
 		for(int i = 0; i < servers.size(); i++)
-				if(Math.abs(lastEvent().last_datetime.getTime() - servers.get(i).last_datetime.getTime()) < 30000) {
+				if(Math.abs(lastEvent().last_datetime- servers.get(i).last_datetime) < 120000) {
+					servers.get(i).isObserving =  true;
 					numberOfObservers++;
 					observersArray.add(servers.get(i).IP);
+				}else {
+					servers.get(i).isObserving = false;
 				}
 		System.out.println(numberOfObservers + " mote(s) observing the event \n");
 		printStats();

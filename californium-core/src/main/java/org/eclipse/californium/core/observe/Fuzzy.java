@@ -44,12 +44,11 @@ public class Fuzzy {
 			if(toEliminate == 1) {
 				System.out.println("Elimination worked");
 				//Event.needToEliminate = true;
-				if(System.currentTimeMillis() - Event.lastEliminationTime > 180000) {
+				if(System.currentTimeMillis() - Event.lastEliminationTime > 300000) {
 					Event.needToEliminate = true;
 					toEliminate = 1;
-					System.out.println("Eliminating");
-					Event.lastEliminationTime = System.currentTimeMillis();
 				}else {
+					Event.needToEliminate = false;
 					toEliminate = 0;
 				}
 
