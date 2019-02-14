@@ -98,8 +98,9 @@ public class EmptyMessage extends Message {
 				return ack;
 			}
 		
-		if(Event.needToEliminate && eli != null && message.getSource().equals(eli.IP)) {
-			System.out.println("Got into deletion " + eli.toString());
+		if(Event.needToEliminate && eli != null && message.getSource().equals(eli.IP)) 
+		{ // O PROBLEMA ESTÁ AQUI PQ QUASE SEMPRE ESTÁ NO ESTADO NEEDTOELIMINATE.
+			System.out.println("...................Got into deletion..................." + eli.toString());
 			System.out.println("This node will be removed: " + message.getSource());
 			System.out.println("SENT KILL!!!\n!!!!!!!\n!!!!!!!!\n");
 			ack.setPayload("k");

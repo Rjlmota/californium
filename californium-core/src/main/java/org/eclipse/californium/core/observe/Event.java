@@ -34,7 +34,7 @@ public class Event {
 	public static List <Server> removed = new ArrayList <Server>();
 	
 	//Timestamp to indicate the last system time that an elimination occurred.
-	public static long lastEliminationTime = System.currentTimeMillis();
+	public static long lastEliminationTime = System.currentTimeMillis() - 9999999;
 	//Timestamp to indicate the last time any relevant message was recieved
 	public static long lastTimeRecieved;
 	
@@ -106,22 +106,16 @@ public class Event {
 
 	
 	public static Server toEliminate() {
-		
 		Server eli = null;
-		
 		double currentLoss = -1;
-		 InetAddress eliminate = null;
-		 int indexEliminate = 0;
 		for(int i = 0; i < servers.size(); i++) {
 			if(servers.get(i).getLoss() > currentLoss && !removed.contains(servers.get(i))) {
 				if(servers.get(i).isHarvesting == 0) {
 					//eliminate = servers.get(i).IP;
 					eli = servers.get(i);
-					indexEliminate = i;
 				}
 			}
 		}
-		//servers.remove(indexEliminate);
 		return eli;
 	}
 	

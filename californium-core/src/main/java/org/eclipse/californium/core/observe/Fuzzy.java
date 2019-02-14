@@ -30,6 +30,10 @@ public class Fuzzy {
 			//Splits out String into an array of Strings, used to conver the values to Non-String values. 
 			String[] separeted_output = output.split("\\s+");
 			
+			
+			for(String str : separeted_output)
+				System.out.println("OIOIOIOI:: "+ str);
+			
 			//INTERVAL:
 			String formatted_interval = formattedFloat(separeted_output[0]);
 			
@@ -40,11 +44,13 @@ public class Fuzzy {
 			int formatted_confirmable = (int)(100*Float.parseFloat(separeted_output[2]));
 			
 			int toEliminate = Integer.parseInt(eliminate);
+			
+			System.out.println("ELIMINATE?" + toEliminate + ".......................................");
 
 			if(toEliminate == 1) {
-				System.out.println("Elimination worked");
+				System.out.println(".................Elimination worked..............");
 				//Event.needToEliminate = true;
-				if(System.currentTimeMillis() - Event.lastEliminationTime > 300000) {
+				if(System.currentTimeMillis() - Event.lastEliminationTime > 480000) {
 					Event.needToEliminate = true;
 					toEliminate = 1;
 				}else {
