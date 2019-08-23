@@ -41,7 +41,7 @@ public class Event {
 	//Public variable to indicate if the program needs to eliminate one node.
 	public static Boolean needToEliminate = false;
 	
-	
+	public static int event_classification;
 
 	
 	//Function that returns the proportion of harvesters observing the event.
@@ -53,7 +53,7 @@ public class Event {
 					if (server.isHarvesting == 1) 
 						harvestingNodes++;
 			//System.out.println("HARVESTING: " + harvestingNodes + " " + numberOfObservers);
-			return (harvestingNodes/(double)numberOfObservers);
+			return (10/(double)numberOfObservers);
 		}else 
 			return 0;
 	}
@@ -63,12 +63,12 @@ public class Event {
 	
 	
 	public static void printStats() {
-		System.out.println("IP\tRecebidas\tPerdidas\tObserving\tLast Message\n");
+		//System.out.println("IP\tRecebidas\tPerdidas\tObserving\tLast Message\n");
 		for(int i = 0; i < servers.size(); i++) {
 			//System.out.println("Mensagens recebidas por " +  Event.servers.get(i).IP + " : " + Event.servers.get(i).rec_msgs);
 			//System.out.println("Duplicadas por : " + Event.servers.get(i).IP + " : " + Event.servers.get(i).duplicates);
 			//System.out.println("Mensagens perdidas por: " + Event.servers.get(i).IP + " : " + Event.servers.get(i).lost_msgs);
-			System.out.println(Event.servers.get(i).IP + "\t" + Event.servers.get(i).rec_msgs + "\t" + Event.servers.get(i).lost_msgs + "\t" + Event.servers.get(i).isObserving + "\t" + Event.servers.get(i).last_datetime);
+			//System.out.println(Event.servers.get(i).IP + "\t" + Event.servers.get(i).rec_msgs + "\t" + Event.servers.get(i).lost_msgs + "\t" + Event.servers.get(i).isObserving + "\t" + Event.servers.get(i).last_datetime);
 		}
 		
 		System.out.println("Removed nodes: \n");
@@ -124,7 +124,7 @@ public class Event {
 		for(int i = 0; i < server.lateMsgs.size(); i++) {
 			//If matched, the system deletes this message from the list, decreases the lost counter and increases the recieved counter.
 			if(current_mid == server.lateMsgs.get(i)) {
-				System.out.println("LATE message recieved");
+				//System.out.println("LATE message recieved");
 				server.lateMsgs.remove(i);
 				
 				server.lost_msgs--;
@@ -137,7 +137,7 @@ public class Event {
 			}
 			
 			if(server.last_msgs.contains(current_mid)) {
-				System.out.println("DUPLICATE");
+				//System.out.println("DUPLICATE");
 				server.duplicates++;
 				server.last_msgs.remove(0);
 				
@@ -162,7 +162,7 @@ public class Event {
 			return true;
 		}
 		
-		System.out.println("CURRENT MID = " + current_mid + "LAST MID = " + server.last_mid);
+		//System.out.println("CURRENT MID = " + current_mid + "LAST MID = " + server.last_mid);
 		
 		
 		
@@ -175,7 +175,7 @@ public class Event {
 		server.last_msgs.add(current_mid);
 		
 		if(current_mid ==  server.last_mid + 1) {
-			System.out.println("RECIEVED");
+			//System.out.println("RECIEVED");
 			server.rec_msgs++;
 			Stats.recieved[server.isHarvesting]++;
 			server.last_mid = current_mid;
@@ -186,10 +186,10 @@ public class Event {
 		
 		//If current MID is not one step ahead of the last_mid, than a message was lost.
 		else if(((server.last_mid +1) < current_mid)) {
-			System.out.println("LOSS");
+			//System.out.println("LOSS");
 			//Defines how many messages were lost.
 			int lap = current_mid - server.last_mid -1;
-			System.out.println("LAP:" + lap);
+			//System.out.println("LAP:" + lap);
 			server.lost_msgs += lap;
 			Stats.lost[server.isHarvesting]+= lap;
 			
@@ -230,10 +230,10 @@ public class Event {
 						Stats.NON++;
 				}
 
-				int eventClass = Character.getNumericValue(payload.charAt(1));
+				int eventClass = event_classification;
 				String output = Fuzzy.start(numberOfObservers/(double)servers.size(), servers.get(i).getLoss(), eventClass, harvestingRate());
-				System.out.println("INPUT--> " + (numberOfObservers/(double)servers.size()) + " " + servers.get(i).getLoss() + " " + eventClass + " " + harvestingRate());
-				System.out.println("OUTPUT--> " + output);
+				//System.out.println("INPUT--> " + (numberOfObservers/(double)servers.size()) + " " + servers.get(i).getLoss() + " " + eventClass + " " + harvestingRate());
+				//System.out.println("OUTPUT--> " + output);
 				updateStats();
 				
 				return 1;
@@ -280,8 +280,10 @@ public class Event {
 				}else {
 					servers.get(i).isObserving = false;
 				}
+		
+		numberOfObservers = 20 - removed.size();
 		System.out.println(numberOfObservers + " mote(s) observing the event \n");
-		printStats();
+		printStats(); 
 	}
 	
 	public static String outputInstructions(Message message) {
@@ -299,7 +301,8 @@ public class Event {
 				
 				next = servers.get(i).last_con + numberOfObservers + i;
 			
-				int event_Class = Character.getNumericValue(message.getPayloadString().charAt(1));
+				//int event_Class = Character.getNumericValue(message.getPayloadString().charAt(1));
+				int event_Class = event_classification;
 				int isHarvester = Character.getNumericValue(message.getPayloadString().charAt(0));
 				
 				//System.out.println("ISHARVESTER: " + isHarvester);

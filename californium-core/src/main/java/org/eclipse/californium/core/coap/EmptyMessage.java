@@ -102,7 +102,7 @@ public class EmptyMessage extends Message {
 		{ // O PROBLEMA ESTÁ AQUI PQ QUASE SEMPRE ESTÁ NO ESTADO NEEDTOELIMINATE.
 			System.out.println("...................Got into deletion..................." + eli.toString());
 			System.out.println("This node will be removed: " + message.getSource());
-			System.out.println("SENT KILL!!!\n!!!!!!!\n!!!!!!!!\n");
+			System.out.println("KILL NODE!!!\n!!!!!!!\n!!!!!!!!\n");
 			ack.setPayload("k");
 			Event.Stats.eliminations++;
 			

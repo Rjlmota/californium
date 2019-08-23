@@ -54,7 +54,7 @@ public class GETClient {
 	
 	public static void main(String args[]) throws IOException {
 		
-		
+		Event.event_classification = Integer.parseInt(args[3]);
 		int obs_number = Integer.parseInt(args[0]);
 		//URI uri = null; // URI parameter of the request
 		//URI uri2 = null;
